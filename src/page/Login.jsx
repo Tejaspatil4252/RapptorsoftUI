@@ -62,7 +62,7 @@ const Login = () => {
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 to-blue-800 p-6 text-center">
             <h1 className="text-2xl font-bold text-white mb-2">Rapportsoft</h1>
-            <p className="text-blue-100 text-sm">Maritime Technology Solutions Since 2005</p>
+            <p className="text-blue-100 text-sm">Software Solution for Small Planet</p>
           </div>
 
           <form onSubmit={handleSubmit} className="p-6 space-y-4">
