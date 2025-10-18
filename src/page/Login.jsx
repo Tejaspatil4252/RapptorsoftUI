@@ -93,92 +93,277 @@ const Login = () => {
     return () => clearInterval(interval);
   }, []);
 
-  return (
-    <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden bg-gray-900">
-      {/* Toast Notification */}
-      <AnimatePresence>
-        {toast.show && (
+ return (
+  <div className="min-h-screen flex items-center justify-center p-4 md:p-6 relative overflow-hidden bg-gray-900">
+    {/* Toast Notification */}
+    <AnimatePresence>
+      {toast.show && (
+        <motion.div
+          initial={{ opacity: 0, y: -100, scale: 0.8 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -100, scale: 0.8 }}
+          transition={{ duration: 0.3, type: "spring", stiffness: 200 }}
+          className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-xl shadow-2xl border-l-4 backdrop-blur-sm ${
+            toast.type === 'error' 
+              ? 'bg-red-500/95 text-white border-red-600' 
+              : 'bg-green-500/95 text-white border-green-600'
+          }`}
+        >
+          <div className="flex items-center gap-3">
+            <div className={`flex-shrink-0 w-3 h-3 rounded-full ${
+              toast.type === 'error' ? 'bg-red-200' : 'bg-green-200'
+            }`}></div>
+            <span className="font-medium text-sm">{toast.message}</span>
+            <button 
+              onClick={() => setToast({ show: false, message: '', type: '' })}
+              className="ml-2 text-white/80 hover:text-white transition-colors"
+            >
+              <FaTimes className="text-xs" />
+            </button>
+          </div>
+          
+          {/* Progress bar */}
           <motion.div
-            initial={{ opacity: 0, y: -100, scale: 0.8 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -100, scale: 0.8 }}
-            transition={{ duration: 0.3, type: "spring", stiffness: 200 }}
-            className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-xl shadow-2xl border-l-4 backdrop-blur-sm ${
-              toast.type === 'error' 
-                ? 'bg-red-500/95 text-white border-red-600' 
-                : 'bg-green-500/95 text-white border-green-600'
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <div className={`flex-shrink-0 w-3 h-3 rounded-full ${
-                toast.type === 'error' ? 'bg-red-200' : 'bg-green-200'
-              }`}></div>
-              <span className="font-medium text-sm">{toast.message}</span>
-              <button 
-                onClick={() => setToast({ show: false, message: '', type: '' })}
-                className="ml-2 text-white/80 hover:text-white transition-colors"
+            initial={{ scaleX: 1 }}
+            animate={{ scaleX: 0 }}
+            transition={{ duration: 4, ease: "linear" }}
+            className={`absolute bottom-0 left-0 right-0 h-1 rounded-b-xl ${
+              toast.type === 'error' ? 'bg-red-300' : 'bg-green-300'
+            } origin-left`}
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
+
+    {/* Background Image Container */}
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
+      className="absolute inset-0"
+    >
+      {dockImages.map((image, index) => (
+        <motion.div
+          key={index}
+          initial={{ opacity: 0 }}
+          animate={{ 
+            opacity: currentImage === index ? 1 : 0 
+          }}
+          transition={{ duration: 1.5 }}
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `url(${image})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
+      ))}
+    </motion.div>
+
+    {/* Dark Overlay */}
+    <div className="absolute inset-0 bg-black/40"></div>
+
+    {/* MOBILE LAYOUT - Show only on small screens */}
+    <div className="block md:hidden w-full max-w-md mx-auto relative z-10">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="bg-black/40 backdrop-blur-lg rounded-2xl border border-white/20 p-6 shadow-2xl mx-4"
+      >
+        {/* Header */}
+        <div className="text-center mb-6">
+          <div className="inline-block bg-red-600/80 backdrop-blur-sm px-6 py-3 rounded-xl border border-red-400/30 mb-4">
+            <h1 className="text-2xl font-bold text-white">Rapptor<span className="font-black">Soft</span></h1>
+            <p className="text-red-100 text-xs">Software Solution for Small Plant</p>
+          </div>
+          <div className="w-16 h-0.5 bg-white/40 rounded-full mx-auto mb-3"></div>
+          <h2 className="text-xl font-semibold text-white mb-1">Welcome Back</h2>
+          <p className="text-white/70 text-sm">Sign in to continue</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-4">
+            {/* Company Name */}
+            <div>
+              <label className="block text-sm font-medium text-white/80 mb-2">Company</label>
+              <div className="relative">
+                <FaBuilding className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 text-sm" />
+                <input
+                  type="text"
+                  name="companyName"
+                  value={formData.companyName}
+                  readOnly
+                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-white/50 focus:bg-white/20 transition-all backdrop-blur-sm"
+                />
+              </div>
+            </div>
+
+            {/* Branch Name */}
+            <div>
+              <label className="block text-sm font-medium text-white/80 mb-2">Branch</label>
+              <div className="relative">
+                <FaMapMarkerAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 text-sm" />
+                <select
+                  name="branchName"
+                  value={formData.branchName}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white focus:outline-none focus:border-white/50 focus:bg-white/20 transition-all backdrop-blur-sm appearance-none"
+                >
+                  <option value="" className="text-gray-800">Select branch</option>
+                  <option value="pune" className="text-gray-800">Pune Headquarters</option>
+                  <option value="mumbai" className="text-gray-800">Mumbai Office</option>
+                  <option value="global1" className="text-gray-800">Global Development Center 1</option>
+                  <option value="global2" className="text-gray-800">Global Development Center 2</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Username */}
+            <div>
+              <label className="block text-sm font-medium text-white/80 mb-2">Username</label>
+              <div className="relative">
+                <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 text-sm" />
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  placeholder="Enter username"
+                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-white/50 focus:bg-white/20 transition-all backdrop-blur-sm"
+                />
+              </div>
+            </div>
+
+            {/* Password */}
+            <div>
+              <label className="block text-sm font-medium text-white/80 mb-2">Password</label>
+              <div className="relative">
+                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 text-sm" />
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Enter password"
+                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-white/50 focus:bg-white/20 transition-all backdrop-blur-sm"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* OTP Section */}
+          <AnimatePresence>
+            {showOtp && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="bg-white/20 border border-white/30 rounded-xl p-4 backdrop-blur-sm overflow-hidden"
               >
-                <FaTimes className="text-xs" />
+                <label className="text-sm font-medium text-white mb-3 flex items-center gap-2">
+                  <FaShieldAlt className="text-white/80" />
+                  OTP Verification
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    name="otp"
+                    value={formData.otp}
+                    onChange={handleChange}
+                    placeholder="Enter 6-digit OTP"
+                    maxLength="6"
+                    className="flex-1 px-4 py-3 bg-white/15 border border-white/40 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-white/60 focus:bg-white/25 backdrop-blur-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSendOtp}
+                    disabled={otpCountdown > 0 || isLoading}
+                    className={`px-4 py-3 rounded-xl text-sm font-medium transition-all flex items-center gap-2 min-w-24 justify-center ${
+                      otpCountdown > 0 || isLoading
+                        ? 'bg-white/20 text-white/40 border border-white/20 cursor-not-allowed' 
+                        : 'bg-white/30 text-white border border-white/40 hover:bg-white/40'
+                    } backdrop-blur-sm`}
+                  >
+                    <FaSyncAlt />
+                    {otpCountdown > 0 ? `${otpCountdown}s` : 'Resend'}
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Action Buttons */}
+          <div className="space-y-3 pt-2">
+            {!showOtp ? (
+              <button
+                type="button"
+                onClick={handleSendOtp}
+                disabled={isLoading}
+                className="w-full bg-white/30 hover:bg-white/40 text-white py-4 rounded-xl font-semibold border border-white/40 transition-all backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Sending OTP...
+                  </>
+                ) : (
+                  <>
+                    <FaShieldAlt />
+                    Send OTP & Continue
+                    <FaArrowRight />
+                  </>
+                )}
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-green-500/80 hover:bg-green-500 text-white py-4 rounded-xl font-semibold border border-green-400 transition-all backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Signing In...
+                  </>
+                ) : (
+                  'Login to System'
+                )}
+              </button>
+            )}
+
+            <div className="text-center">
+              <button type="button" className="text-white/70 hover:text-white text-sm transition-colors">
+                Forgot password?
               </button>
             </div>
-            
-            {/* Progress bar */}
-            <motion.div
-              initial={{ scaleX: 1 }}
-              animate={{ scaleX: 0 }}
-              transition={{ duration: 4, ease: "linear" }}
-              className={`absolute bottom-0 left-0 right-0 h-1 rounded-b-xl ${
-                toast.type === 'error' ? 'bg-red-300' : 'bg-green-300'
-              } origin-left`}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </form>
 
-      {/* Background Image Container */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-        className="absolute inset-0"
-      >
-        {dockImages.map((image, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0 }}
-            animate={{ 
-              opacity: currentImage === index ? 1 : 0 
-            }}
-            transition={{ duration: 1.5 }}
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `url(${image})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }}
-          />
-        ))}
+        {/* Footer */}
+        <div className="text-center mt-6 pt-4 border-t border-white/20">
+          <p className="text-xs text-white/60">
+            Authorized VGM Vendor • D.G. Shipping Mumbai Approved
+          </p>
+        </div>
       </motion.div>
+    </div>
 
-      {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-black/40"></div>
-
-      {/* Main Container - 60/40 RATIO */}
+    {/* DESKTOP LAYOUT - Show only on medium+ screens (YOUR EXISTING CODE) */}
+    <div className="hidden md:block relative z-10 w-full max-w-6xl h-[80vh]">
       <motion.div 
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        className="relative z-10 w-full max-w-6xl h-[80vh] flex rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+        className="w-full h-full flex rounded-2xl overflow-hidden shadow-2xl border border-white/10"
       >
-        {/* Left Side - IMAGE SECTION (60%) */}
+        {/* Left Side - IMAGE SECTION (60%) - YOUR EXISTING CODE */}
         <motion.div 
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           className="flex-1 relative rounded-l-2xl overflow-hidden"
-          style={{
-            flex: '0 0 60%'
-          }}
+          style={{ flex: '0 0 60%' }}
         >
           {/* Current Background Image */}
           <motion.div
@@ -253,232 +438,239 @@ const Login = () => {
           </div>
         </motion.div>
 
-        {/* Right Side - FORM SECTION (40%) */}
-        <motion.div 
-          initial={{ x: 100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="flex-1 relative bg-white/95 backdrop-blur-sm border-l border-gray-200/50"
-          style={{
-            flex: '0 0 40%'
-          }}
-        >
-          {/* Form Container */}
-          <div className="h-full flex flex-col justify-center p-6">
-            {/* Form Header */}
-            <motion.div
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.8 }}
-              className="text-center mb-6"
-            >
-              <div className="w-12 h-0.5 bg-red-500 rounded-full mx-auto mb-3"></div>
-              <h2 className="text-xl font-semibold text-gray-800 mb-1">Welcome Back</h2>
-              <p className="text-gray-500 text-xs">Sign in to your maritime portal</p>
-            </motion.div>
+  {/* Right Side - FORM SECTION (40%) - FIXED VERSION */}
+<motion.div 
+  initial={{ x: 100, opacity: 0 }}
+  animate={{ x: 0, opacity: 1 }}
+  transition={{ duration: 0.8, delay: 0.6 }}
+  className="flex-1 relative bg-white/95 backdrop-blur-sm border-l border-gray-200/50"
+  style={{ flex: '0 0 40%' }}
+>
+  {/* Form Container with Smart Layout */}
+  <div className="h-full flex flex-col p-6">
+    {/* Form Header - Fixed at top */}
+    <motion.div
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, delay: 0.8 }}
+      className="text-center mb-6 flex-shrink-0"
+    >
+      <div className="w-12 h-0.5 bg-red-500 rounded-full mx-auto mb-3"></div>
+      <h2 className="text-xl font-semibold text-gray-800 mb-1">Welcome Back</h2>
+      <p className="text-gray-500 text-xs">Sign in to your maritime portal</p>
+    </motion.div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Field Group */}
-              <div className="space-y-3">
-                {/* Company Name */}
-                <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">
-                    Company
-                  </label>
-                  <div className="relative">
-                    <FaBuilding className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs" />
-                    <input
-                      type="text"
-                      name="companyName"
-                      value={formData.companyName}
-                      readOnly
-                      className="w-full pl-9 pr-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg text-gray-600 focus:outline-none focus:border-red-400 focus:bg-white transition-all"
-                    />
-                  </div>
-                </div>
-
-                {/* Branch Name */}
-                <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">
-                    Branch Location
-                  </label>
-                  <div className="relative">
-                    <FaMapMarkerAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs" />
-                    <select
-                      name="branchName"
-                      value={formData.branchName}
-                      onChange={handleChange}
-                      required
-                      className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg text-gray-700 focus:outline-none focus:border-red-400 focus:bg-white transition-all appearance-none bg-white"
-                    >
-                      <option value="">Select your branch</option>
-                      <option value="pune">Pune Headquarters</option>
-                      <option value="mumbai">Mumbai Office</option>
-                      <option value="global1">Global Development Center 1</option>
-                      <option value="global2">Global Development Center 2</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Username */}
-                <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">
-                    Username
-                  </label>
-                  <div className="relative">
-                    <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs" />
-                    <input
-                      type="text"
-                      name="username"
-                      value={formData.username}
-                      onChange={handleChange}
-                      required
-                      placeholder="Enter your username"
-                      className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg text-gray-700 placeholder-gray-400 focus:outline-none focus:border-red-400 focus:bg-white transition-all"
-                    />
-                  </div>
-                </div>
-
-                {/* Password */}
-                <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">
-                    Password
-                  </label>
-                  <div className="relative">
-                    <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs" />
-                    <input
-                      type="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      required
-                      placeholder="Enter your password"
-                      className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg text-gray-700 placeholder-gray-400 focus:outline-none focus:border-red-400 focus:bg-white transition-all"
-                    />
-                  </div>
-                </div>
+    {/* Main Form Content with Reserved Space */}
+    <div className="flex-1 flex flex-col justify-center">
+      <motion.div
+        layout
+        transition={{ duration: 0.4, type: "spring", stiffness: 200 }}
+        className="w-full"
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Field Group - YOUR EXISTING DESKTOP FORM FIELDS */}
+          <div className="space-y-3">
+            {/* Company Name */}
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">
+                Company
+              </label>
+              <div className="relative">
+                <FaBuilding className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs" />
+                <input
+                  type="text"
+                  name="companyName"
+                  value={formData.companyName}
+                  readOnly
+                  className="w-full pl-9 pr-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg text-gray-600 focus:outline-none focus:border-red-400 focus:bg-white transition-all"
+                />
               </div>
+            </div>
 
-              {/* OTP Section */}
-              <AnimatePresence>
-                {showOtp && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-2">
-                      <label className="block text-xs font-medium text-red-700 mb-2 flex items-center gap-1">
-                        <FaShieldAlt className="text-red-600 text-xs" />
-                        OTP Verification
-                      </label>
-                      <div className="flex gap-2">
-                        <div className="relative flex-1">
-                          <input
-                            type="text"
-                            name="otp"
-                            value={formData.otp}
-                            onChange={handleChange}
-                            required
-                            placeholder="Enter 6-digit OTP"
-                            maxLength="6"
-                            className="w-full pl-3 pr-3 py-2 text-sm border border-red-300 rounded-lg text-gray-700 placeholder-red-400 focus:outline-none focus:border-red-500 focus:bg-white transition-all bg-white"
-                          />
-                        </div>
-                        <button
-                          type="button"
-                          onClick={handleSendOtp}
-                          disabled={otpCountdown > 0 || isLoading}
-                          className={`px-3 py-2 rounded text-xs font-medium transition-all flex items-center gap-1 min-w-20 justify-center ${
-                            otpCountdown > 0 || isLoading
-                              ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200' 
-                              : 'bg-red-500 text-white hover:bg-red-600 border border-red-500'
-                          }`}
-                        >
-                          <FaSyncAlt className="text-xs" />
-                          {otpCountdown > 0 ? `${otpCountdown}s` : 'Resend'}
-                        </button>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+            {/* Branch Name */}
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">
+                Branch Location
+              </label>
+              <div className="relative">
+                <FaMapMarkerAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs" />
+                <select
+                  name="branchName"
+                  value={formData.branchName}
+                  onChange={handleChange}
+                  required
+                  className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg text-gray-700 focus:outline-none focus:border-red-400 focus:bg-white transition-all appearance-none bg-white"
+                >
+                  <option value="">Select your branch</option>
+                  <option value="pune">Pune Headquarters</option>
+                  <option value="mumbai">Mumbai Office</option>
+                  <option value="global1">Global Development Center 1</option>
+                  <option value="global2">Global Development Center 2</option>
+                </select>
+              </div>
+            </div>
 
-              {/* Action Buttons */}
-              <div className="space-y-3 pt-2">
-                {!showOtp ? (
-                  <motion.button
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.99 }}
-                    type="button"
-                    onClick={handleSendOtp}
-                    disabled={isLoading}
-                    className="w-full bg-red-500 text-white py-2.5 rounded-lg font-semibold hover:bg-red-600 disabled:bg-red-400 transition-all duration-200 flex items-center justify-center gap-2 text-xs shadow-sm"
-                  >
-                    {isLoading ? (
-                      <>
-                        <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        Sending OTP...
-                      </>
-                    ) : (
-                      <>
-                        <FaShieldAlt className="text-xs" />
-                        Send OTP & Continue
-                        <FaArrowRight className="text-xs" />
-                      </>
-                    )}
-                  </motion.button>
-                ) : (
-                  <motion.button
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.99 }}
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full bg-green-500 text-white py-2.5 rounded-lg font-semibold hover:bg-green-600 disabled:bg-green-400 transition-all duration-200 flex items-center justify-center gap-2 text-xs shadow-sm"
-                  >
-                    {isLoading ? (
-                      <>
-                        <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        Signing In...
-                      </>
-                    ) : (
-                      <>
-                        <FaShieldAlt className="text-xs" />
-                        Login to System
-                        <FaArrowRight className="text-xs" />
-                      </>
-                    )}
-                  </motion.button>
-                )}
+            {/* Username */}
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">
+                Username
+              </label>
+              <div className="relative">
+                <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs" />
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  required
+                  placeholder="Enter your username"
+                  className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg text-gray-700 placeholder-gray-400 focus:outline-none focus:border-red-400 focus:bg-white transition-all"
+                />
+              </div>
+            </div>
 
-                <div className="text-center">
+            {/* Password */}
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">
+                Password
+              </label>
+              <div className="relative">
+                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs" />
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  placeholder="Enter your password"
+                  className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg text-gray-700 placeholder-gray-400 focus:outline-none focus:border-red-400 focus:bg-white transition-all"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* OTP Section - Now with better animation */}
+          <AnimatePresence>
+            {showOtp && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
+                className="bg-red-50 border border-red-200 rounded-lg p-3"
+              >
+                <label className="text-xs font-medium text-red-700 mb-2 flex items-center gap-1">
+                  <FaShieldAlt className="text-red-600 text-xs" />
+                  OTP Verification
+                </label>
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <input
+                      type="text"
+                      name="otp"
+                      value={formData.otp}
+                      onChange={handleChange}
+                      required
+                      placeholder="Enter 6-digit OTP"
+                      maxLength="6"
+                      className="w-full pl-3 pr-3 py-2 text-sm border border-red-300 rounded-lg text-gray-700 placeholder-red-400 focus:outline-none focus:border-red-500 focus:bg-white transition-all bg-white"
+                    />
+                  </div>
                   <button
                     type="button"
-                    className="text-gray-500 hover:text-red-500 transition-colors text-xs hover:underline"
+                    onClick={handleSendOtp}
+                    disabled={otpCountdown > 0 || isLoading}
+                    className={`px-3 py-2 rounded text-xs font-medium transition-all flex items-center gap-1 min-w-20 justify-center ${
+                      otpCountdown > 0 || isLoading
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200' 
+                        : 'bg-red-500 text-white hover:bg-red-600 border border-red-500'
+                    }`}
                   >
-                    Forgot your password?
+                    <FaSyncAlt className="text-xs" />
+                    {otpCountdown > 0 ? `${otpCountdown}s` : 'Resend'}
                   </button>
                 </div>
-              </div>
-            </form>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-            {/* Footer */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 1 }}
-              className="text-center mt-6 pt-4 border-t border-gray-100"
-            >
-              <p className="text-xs text-gray-400">
-                Authorized VGM Vendor • D.G. Shipping Mumbai Approved
-              </p>
-            </motion.div>
+          {/* Action Buttons */}
+          <div className="space-y-3 pt-2">
+            {!showOtp ? (
+              <motion.button
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                type="button"
+                onClick={handleSendOtp}
+                disabled={isLoading}
+                className="w-full bg-red-500 text-white py-2.5 rounded-lg font-semibold hover:bg-red-600 disabled:bg-red-400 transition-all duration-200 flex items-center justify-center gap-2 text-xs shadow-sm"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Sending OTP...
+                  </>
+                ) : (
+                  <>
+                    <FaShieldAlt className="text-xs" />
+                    Send OTP & Continue
+                    <FaArrowRight className="text-xs" />
+                  </>
+                )}
+              </motion.button>
+            ) : (
+              <motion.button
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-green-500 text-white py-2.5 rounded-lg font-semibold hover:bg-green-600 disabled:bg-green-400 transition-all duration-200 flex items-center justify-center gap-2 text-xs shadow-sm"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Signing In...
+                  </>
+                ) : (
+                  <>
+                    <FaShieldAlt className="text-xs" />
+                    Login to System
+                    <FaArrowRight className="text-xs" />
+                  </>
+                )}
+              </motion.button>
+            )}
+
+            <div className="text-center">
+              <button
+                type="button"
+                className="text-gray-500 hover:text-red-500 transition-colors text-xs hover:underline"
+              >
+                Forgot your password?
+              </button>
+            </div>
           </div>
-        </motion.div>
+        </form>
       </motion.div>
     </div>
-  );
+
+    {/* Footer - Fixed at bottom */}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6, delay: 1 }}
+      className="text-center mt-6 pt-4 border-t border-gray-100 flex-shrink-0"
+    >
+      <p className="text-xs text-gray-400">
+        Authorized VGM Vendor • D.G. Shipping Mumbai Approved
+      </p>
+    </motion.div>
+  </div>
+</motion.div>
+      </motion.div>
+    </div>
+  </div>
+);
 };
 
 export default Login;
