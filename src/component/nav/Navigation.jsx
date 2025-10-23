@@ -12,7 +12,37 @@ const Navigation = ({ onToggleSidebar }) => {
     >
       <div className="flex items-center justify-between">
         
-        {/* Left Section - User Info (Hidden on mobile, full on desktop) */}
+        {/* LEFT: Sidebar Toggle + Logo */}
+        <motion.div className="flex items-center gap-4 sm:gap-6">
+          {/* Sidebar Toggle */}
+          <motion.button
+            whileHover={{ 
+              scale: 1.1,
+              backgroundColor: "#dc2626",
+            }}
+            whileTap={{ scale: 0.9 }}
+            onClick={onToggleSidebar}
+            className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 backdrop-blur-sm border border-red-400/30 rounded-xl sm:rounded-2xl p-2 sm:p-3 text-white transition-all duration-300 shadow-lg"
+          >
+            <FaBars className="text-base sm:text-lg" />
+          </motion.button>
+
+          {/* Logo */}
+          <motion.div 
+            initial={{ scale: 0, y: -20 }}
+            animate={{ scale: 1, y: 0 }}
+            transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
+            className="flex items-center"
+          >
+            <img 
+              src={navLogo} 
+              alt="RapptorSoft" 
+              className="h-8 sm:h-10 drop-shadow-2xl" 
+            />
+          </motion.div>
+        </motion.div>
+
+        {/* RIGHT: User Info */}
         <motion.div 
           whileHover={{ scale: 1.02 }}
           className="flex items-center gap-4"
@@ -41,38 +71,6 @@ const Navigation = ({ onToggleSidebar }) => {
             </div>
             <span className="text-white text-xs font-medium">JD</span>
           </div>
-        </motion.div>
-
-        {/* Right Section - Logo & Menu Toggle (Original desktop layout) */}
-        <motion.div 
-          className="flex items-center gap-4 sm:gap-6"
-        >
-          {/* Logo - Stays on right like original */}
-          <motion.div 
-            initial={{ scale: 0, y: -20 }}
-            animate={{ scale: 1, y: 0 }}
-            transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
-            className="flex items-center"
-          >
-            <img 
-              src={navLogo} 
-              alt="RapptorSoft" 
-              className="h-8 sm:h-10 drop-shadow-2xl" 
-            />
-          </motion.div>
-
-          {/* Menu Toggle */}
-          <motion.button
-            whileHover={{ 
-              scale: 1.1,
-              backgroundColor: "#dc2626",
-            }}
-            whileTap={{ scale: 0.9 }}
-            onClick={onToggleSidebar}
-            className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 backdrop-blur-sm border border-red-400/30 rounded-xl sm:rounded-2xl p-2 sm:p-3 text-white transition-all duration-300 shadow-lg"
-          >
-            <FaBars className="text-base sm:text-lg" />
-          </motion.button>
         </motion.div>
 
       </div>

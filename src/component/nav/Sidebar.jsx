@@ -46,13 +46,13 @@
             />
 
             {/* Sidebar */}
-            <motion.div
-                initial={{ x: "100%" }}
-                animate={{ x: 0 }}
-                exit={{ x: "100%" }}
-                transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                className="fixed top-0 right-0 h-full w-80 bg-gray-900 shadow-2xl z-50 border-l border-red-500/30 flex flex-col"
-            >
+        <motion.div
+        initial={{ x: "-100%" }}    
+        animate={{ x: 0 }}
+        exit={{ x: "-100%" }}      
+         transition={{ type: "spring", damping: 30, stiffness: 300 }}
+         className="fixed top-0 left-0 h-full w-80 bg-gray-900 shadow-2xl z-50 border-r border-red-500/30 flex flex-col"  // ✅ Changed right-0 to left-0 and border-l to border-r
+        >
                 {/* Sidebar Header */}
                 <div className="flex-shrink-0">
                 <div className="flex items-center justify-between p-6 border-b border-gray-700 bg-gradient-to-r from-gray-900 to-gray-800">
