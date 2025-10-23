@@ -1,0 +1,24 @@
+/* Apply scrollbar styles to the scrollable container */
+.scrollContainer::-webkit-scrollbar {
+  width: 3px;
+}
+
+.scrollContainer::-webkit-scrollbar-track {
+  background: #1f2937; /* gray-800 */
+  border-radius: 1px;
+}
+
+.scrollContainer::-webkit-scrollbar-thumb {
+  background: #111827; /* gray-900 */
+  border-radius: 1px;
+}
+
+.scrollContainer::-webkit-scrollbar-thumb:hover {
+  background: #030712; /* gray-950 */
+}
+
+/* Ensure the container is scrollable */
+.scrollContainer {
+  scrollbar-width: thin;
+  scrollbar-color: #111827 #1f2937;
+}
